@@ -33,9 +33,30 @@ public class Loginpage extends javax.swing.JFrame {
         initComponents();
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
+         Object col[] = {"Fname","Lname","Email","Password","Gender"};
+        model.setColumnIdentifiers(col);
+        jTable2.setModel(model);
+        
+        conn = Facebook.ConnectDb();
+        
+        updateTable();
+        
         
        
         
+    }
+     public static Connection ConnectDb(){
+        try
+        {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn =DriverManager.getConnection("jdbc:sqlite:Facebook.db");
+            return conn ;
+         }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+            return null;
+        }
     }
     public Loginpage(String mnop){
         this.mnop = mnop;
@@ -45,6 +66,34 @@ public class Loginpage extends javax.swing.JFrame {
         
         
     }
+    
+    
+    public void updateTable(){
+        String sql="Select Fname,Lname,Email,Gender from Facebook";
+        
+        try
+        {
+         pst = conn.prepareStatement(sql);
+         rs = pst.executeQuery();
+         Object[] columnData = new Object[4];
+         
+         while (rs.next()){
+             columnData [0] = rs.getString("Fname");
+             columnData [1] = rs.getString("Lname");
+             columnData [2] = rs.getString("Email");
+             columnData [3] = rs.getString("Gender");
+             
+             
+             model.addRow(columnData);
+         }
+         
+        }
+         catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     
       
     
@@ -66,6 +115,8 @@ public class Loginpage extends javax.swing.JFrame {
         jTextField2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -82,8 +133,20 @@ public class Loginpage extends javax.swing.JFrame {
         jButton1.setText("jButton1");
         jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 650, 30));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 830, 30));
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 40, 80, 20));
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Firstname", "Secondname", "email", "Gender"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable2);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 370, 290));
 
         pack();
     }// </editor-fold>                        
@@ -128,6 +191,8 @@ public class Loginpage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration                   
 }
